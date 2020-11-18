@@ -49,8 +49,8 @@ TEAMS = ['总', '010', '075', '060', '080']
 
 Q_START = datetime.datetime(2020, 10, 1)
 
-TABLE_COLS = ['Team', '季度目标', '日均目标', '已完成利润', '平均日利润', '平均利润差', '剩余季度目标', '剩余日目标',
-              '平均日收入', '平均日消耗']
+TABLE_COLS = ['Team', '  季度目标', '  日均目标', '已完成利润', '平均日利润', '平均利润差', '剩余季度目标', '剩余日目标',
+              ' 平均日收入', ' 平均日消耗', ' 昨日组收入', ' 昨日组消耗']
 
 
 def quarter_target_table(data, rmb=False):
@@ -82,9 +82,13 @@ def quarter_target_table(data, rmb=False):
         q_todo = q_target - q_done                   # 剩余季度目标
         day_todo = q_todo/(92 - day_range)           # 剩余日目标
 
+        last_day_data = data_team[data_team['date'] >= dates[-1]]
+        last_day_revenue = last_day_data.earnings.sum()
+        last_day_cost = last_day_data.spend.sum()
+
         values = [team]
         values.extend([int(v/div_factor) for v in [q_target, day_target, q_done, day_done, day_diff, q_todo, day_todo,
-                                                   day_revenue, day_cost]])
+                                                   day_revenue, day_cost, last_day_revenue, last_day_cost]])
         new1 = pd.DataFrame([values], columns=TABLE_COLS)
         d_table = d_table.append(new1)
 
@@ -96,7 +100,7 @@ def get_table(data, rmb=False):
     d_table = dash_table.DataTable(id='team_profit_table',
                                    columns=[{'id': c, 'name': c} for c in TABLE_COLS],
                                    data=dd_table.to_dict('records'),
-                                   style_table={'width': '80%'},
+                                   style_table={'width': '90%'},
                                    style_data_conditional=[
                                        {'if': {'filter_query': '{平均利润差} > 0', 'column_id': '平均利润差'},
                                         'color': 'tomato', 'fontWeight': 'bold'},
