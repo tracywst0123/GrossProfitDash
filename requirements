@@ -6,3 +6,9 @@ Dash
 pandas
 datetime
 plotly
+numpy
+dash-core-components
+dash-html-components
+dash-renderer
+python-dateutil
+urllib3
