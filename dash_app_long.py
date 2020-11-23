@@ -6,18 +6,17 @@ from utils import get_app_fig, data_loader, get_selector_graph_combo, APPS, get_
     quarter_target_table, get_currency_selector, get_table
 
 
-def construct_html_children(data, total_graph_app_list=APPS, app_list=APPS):
-    d_table, date_str = get_table(data)
+def construct_html_children(init_data, total_graph_app_list=APPS, app_list=APPS):
+    d_table, date_str = get_table(init_data)
     graph_list = [html.H5(id='table_id', children=date_str), get_currency_selector(), d_table, html.Br(), html.Br()]
     graph_list.extend([get_apps_checklist('apps_choice'), html.Br(), html.Br()])
-    graph_list.extend(get_selector_graph_combo(data,
-                                               'total',
+    graph_list.extend(get_selector_graph_combo(init_data, 'total',
                                                day_range=30,
                                                multiple_apps=True,
                                                apps_list=total_graph_app_list))
 
     for app_name in app_list:
-        combo = get_selector_graph_combo(data, app_name, day_range=30)
+        combo = get_selector_graph_combo(init_data, app_name, day_range=30)
         graph_list.extend(combo)
 
     return graph_list

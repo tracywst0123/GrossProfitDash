@@ -6,9 +6,6 @@ import dash_core_components as dcc
 import dash_table
 
 
-RMBperDOLLAR = 6.7
-
-
 APP_LIST = [('Space_K', 'com.oneapp.max.cleaner.booster.cn'),
             ('PrivacyPowerPro_K', 'com.oneapp.max.security.pro.cn'),
             ('Optimizer_K', 'com.oneapp.max.cn'),
@@ -23,22 +20,30 @@ APP_LIST = [('Space_K', 'com.oneapp.max.cleaner.booster.cn'),
             ('Amber_K', 'com.diamond.coin.cn'),
             ('River_K', 'com.crazystone.coin.cn'),
             ('Walk_K', 'com.walk.sports.cn'),
+            # todo: RunFast
+            # ('RunFast_K', 'com.run.sports.cn'),
             ('Mars_K', 'com.cyqxx.puzzle.idiom.cn'),
             ('Athena', '1503126294'),
             ('Apollo_K', 'com.yqs.cn'),
             ('Poseidon_K', 'com.lightyear.dccj')]
 
 APPS = ['Space_K', 'PrivacyPowerPro_K', 'Optimizer_K', 'FastClear_K', 'Normandy_K', '500_K', 'Cookie_K',
-        'ColorPhone_K', 'DogRaise_K', 'Rat_K', 'LuckyDog_K', 'Amber_K', 'River_K', 'Walk_K', 'Mars_K',
-        'Athena', 'Apollo_K', 'Poseidon_K']
+        'ColorPhone_K', 'DogRaise_K', 'Rat_K', 'LuckyDog_K', 'Amber_K', 'River_K', 'Walk_K',
+        # todo: RunFast
+        # 'RunFast',
+        'Mars_K', 'Athena', 'Apollo_K', 'Poseidon_K']
 
 TEAM_APPS = {'总': ['Space_K', 'PrivacyPowerPro_K', 'Optimizer_K', 'FastClear_K', '500_K', 'Cookie_K',
                    'ColorPhone_K', 'DogRaise_K', 'Rat_K', 'LuckyDog_K', 'Amber_K', 'River', 'Walk_K',
                    'Mars_K', 'Athena', 'Apollo_K', 'Poseidon_K'],
+             # todo: RunFast
+             # , 'RunFast_K'
              '010': ['Space_K', 'PrivacyPowerPro_K', 'Optimizer_K', 'FastClear_K', 'Amber_K', 'Walk_K', 'River_K'],
              '075': ['Mars_K', 'Athena', 'Apollo_K', 'Poseidon_K'],
              '060': ['500_K', 'Cookie_K', 'ColorPhone_K', 'DogRaise_K', 'Rat_K', 'LuckyDog_K'],
              '080': ['Normandy_K']}
+
+RMBperDOLLAR = 6.7
 
 TEAM_TAR = {'总': 80000*RMBperDOLLAR,
             '010': 40000*RMBperDOLLAR,
@@ -53,13 +58,13 @@ TABLE_COLS = ['Team', '  季度目标', '  日均目标', '已完成利润', '�
               ' 平均日收入', ' 平均日消耗', ' 昨日组收入', ' 昨日组消耗']
 
 
-def quarter_target_table(data, rmb=False):
+def quarter_target_table(data, rmb=False, q_start=Q_START):
     d_table = pd.DataFrame(columns=TABLE_COLS)
     data['profit'] = data['earnings'] - data['spend']
-    data = data[data['date'] >= Q_START]
+    data = data[data['date'] >= q_start]
 
     dates = data.date.unique()
-    date_str = str(dates[0])[:10] + ' ~ ' + str(dates[-1])[:10]
+    dates_str = str(dates[0])[:10] + ' ~ ' + str(dates[-1])[:10]
     day_range = len(dates)
 
     if rmb:
@@ -83,16 +88,15 @@ def quarter_target_table(data, rmb=False):
         day_todo = q_todo/(92 - day_range)           # 剩余日目标
 
         last_day_data = data_team[data_team['date'] >= dates[-1]]
-        last_day_revenue = last_day_data.earnings.sum()
-        last_day_cost = last_day_data.spend.sum()
+        last_day_revenue = last_day_data.earnings.sum()  # 昨日组收入
+        last_day_cost = last_day_data.spend.sum()        # 昨日组消耗
 
         values = [team]
         values.extend([int(v/div_factor) for v in [q_target, day_target, q_done, day_done, day_diff, q_todo, day_todo,
                                                    day_revenue, day_cost, last_day_revenue, last_day_cost]])
-        new1 = pd.DataFrame([values], columns=TABLE_COLS)
-        d_table = d_table.append(new1)
+        d_table = d_table.append(pd.DataFrame([values], columns=TABLE_COLS))
 
-    return d_table, date_str
+    return d_table, dates_str
 
 
 def get_table(data, rmb=False):
@@ -154,20 +158,25 @@ def get_app_fig(data, app_name, day_range, multiple_apps=False, apps_list=None):
 
 def draw_diverging_profit(data, name):
     x = data.date
-    sumxy = data.earnings - data.spend
+    sum_xy = data.earnings - data.spend
     fig = go.Figure()
     fig.add_trace(go.Bar(x=x, y=data.earnings, name='Profit'))
     fig.add_trace(go.Bar(x=x, y=-data.spend, name='Cost'))
-    fig.add_trace(go.Scatter(x=x, y=sumxy, mode='lines+markers', name='Gross'))
+    fig.add_trace(go.Scatter(x=x, y=sum_xy, mode='lines+markers', name='Gross'))
     gross_profit = int(sum(data.earnings) - sum(data.spend))
     fig.update_layout(barmode='relative',
                       title_text=name+'      = '+str(gross_profit))
     return fig
 
 
-def get_apps_checklist(selector_id):
+def get_apps_checklist(selector_app, selector_team=None):
+    # teams = [{'label': '010', 'value': TEAM_APPS.get('010')},
+    #          {'label': '060', 'value': TEAM_APPS.get('060')}, {
+    #              'label': '075', 'value': TEAM_APPS.get('075')}]
     options = [{'label': app, 'value': app} for app in APPS]
-    return dcc.Checklist(id=selector_id, options=options, value=APPS)
+
+    # return dcc.Checklist(id=selector_team, options=teams, value=APPS),\
+    return dcc.Checklist(id=selector_app, options=options, value=APPS)
 
 
 def data_loader(cost_path='cost.csv', revenue_path='revenue.csv'):
