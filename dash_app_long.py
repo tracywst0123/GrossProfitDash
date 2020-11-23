@@ -1,4 +1,5 @@
 import dash
+import os
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
@@ -141,5 +142,5 @@ def update_date_range(value):
 
 
 if __name__ == '__main__':
-    port = 8050
+    port = int(os.environ.get("PORT", 5000))
     app.run_server(debug=False, host='0.0.0.0', port=port)
