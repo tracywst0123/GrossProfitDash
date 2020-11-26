@@ -141,6 +141,11 @@ def update_date_range(value):
     return get_app_fig(data, 'Poseidon_K', day_range=value)
 
 
+@app.callback(Output('Ares_K', 'figure'), [Input('Ares_K_date_range', 'value')])
+def update_date_range(value):
+    return get_app_fig(data, 'Ares_K', day_range=value)
+
+
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 8050))
     app.run_server(debug=False, host='0.0.0.0', port=port)

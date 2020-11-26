@@ -2,26 +2,7 @@ import numpy as np
 import os
 import pandas as pd
 import datetime
-
-
-APP_LIST = [('Space_K', 'com.oneapp.max.cleaner.booster.cn'),
-            ('PrivacyPowerPro_K', 'com.oneapp.max.security.pro.cn'),
-            ('Optimizer_K', 'com.oneapp.max.cn'),
-            ('FastClear_K', 'com.boost.clean.coin.cn'),
-            ('Normandy_K', 'com.normandy.booster.cn'),
-            ('500_K', 'com.honeycomb.launcher.cn'),
-            ('Cookie_K', 'com.emoticon.screen.home.launcher.cn'),
-            ('ColorPhone_K', 'com.colorphone.smooth.dialer.cn'),
-            ('DogRaise_K', 'com.dograise.richman.cn'),
-            ('Rat_K', 'com.rat.countmoney.cn'),
-            ('LuckyDog_K', 'com.fortunedog.cn'),
-            ('Amber_K', 'com.diamond.coin.cn'),
-            ('River_K', 'com.crazystone.coin.cn'),
-            ('Walk_K', 'com.walk.sports.cn'),
-            ('Mars_K', 'com.cyqxx.puzzle.idiom.cn'),
-            ('Athena', '1503126294'),
-            ('Apollo_K', 'com.yqs.cn'),
-            ('Poseidon_K', 'com.lightyear.dccj')]
+from utils import APP_LIST
 
 
 def clean_earnings(df):
@@ -67,6 +48,7 @@ if __name__ == '__main__':
     print(cost)
     cost = pd.concat([cost, cost_new])
     cost = cost[['date', 'app', 'spend']]
+    cost = cost[cost.app.notnull()]
     print(cost)
     cost.to_csv(cost_path)
 

@@ -25,21 +25,22 @@ APP_LIST = [('Space_K', 'com.oneapp.max.cleaner.booster.cn'),
             ('Mars_K', 'com.cyqxx.puzzle.idiom.cn'),
             ('Athena', '1503126294'),
             ('Apollo_K', 'com.yqs.cn'),
-            ('Poseidon_K', 'com.lightyear.dccj')]
+            ('Poseidon_K', 'com.lightyear.dccj'),
+            ('Ares_K', 'com.idiom.tjj.cn')]
 
 APPS = ['Space_K', 'PrivacyPowerPro_K', 'Optimizer_K', 'FastClear_K', 'Normandy_K', '500_K', 'Cookie_K',
         'ColorPhone_K', 'DogRaise_K', 'Rat_K', 'LuckyDog_K', 'Amber_K', 'River_K', 'Walk_K',
         # todo: RunFast
         # 'RunFast',
-        'Mars_K', 'Athena', 'Apollo_K', 'Poseidon_K']
+        'Mars_K', 'Athena', 'Apollo_K', 'Poseidon_K', 'Ares_K']
 
 TEAM_APPS = {'总': ['Space_K', 'PrivacyPowerPro_K', 'Optimizer_K', 'FastClear_K', '500_K', 'Cookie_K',
-                   'ColorPhone_K', 'DogRaise_K', 'Rat_K', 'LuckyDog_K', 'Amber_K', 'River', 'Walk_K',
-                   'Mars_K', 'Athena', 'Apollo_K', 'Poseidon_K'],
+                   'ColorPhone_K', 'DogRaise_K', 'Rat_K', 'LuckyDog_K', 'Amber_K', 'River_K', 'Walk_K',
+                   'Mars_K', 'Athena', 'Apollo_K', 'Poseidon_K', 'Ares_K'],
              # todo: RunFast
              # , 'RunFast_K'
              '010': ['Space_K', 'PrivacyPowerPro_K', 'Optimizer_K', 'FastClear_K', 'Amber_K', 'Walk_K', 'River_K'],
-             '075': ['Mars_K', 'Athena', 'Apollo_K', 'Poseidon_K'],
+             '075': ['Mars_K', 'Athena', 'Apollo_K', 'Poseidon_K', 'Ares_K'],
              '060': ['500_K', 'Cookie_K', 'ColorPhone_K', 'DogRaise_K', 'Rat_K', 'LuckyDog_K'],
              '080': ['Normandy_K']}
 
