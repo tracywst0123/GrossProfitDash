@@ -4,13 +4,13 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 from utils import get_app_fig, data_loader, get_selector_graph_combo, APPS, get_apps_checklist, \
-    quarter_target_table, get_currency_selector, get_table
+    quarter_target_table, get_currency_selector, get_table, get_team_selector, get_apps_options, TEAM_APPS
 
 
 def construct_html_children(init_data, total_graph_app_list=APPS, app_list=APPS):
     d_table, date_str = get_table(init_data)
     graph_list = [html.H5(id='table_id', children=date_str), get_currency_selector(), d_table, html.Br(), html.Br()]
-    graph_list.extend([get_apps_checklist('apps_choice'), html.Br(), html.Br()])
+    graph_list.extend([get_team_selector(), get_apps_checklist('apps_choice', selector_team='total'), html.Br(), html.Br()])
     graph_list.extend(get_selector_graph_combo(init_data, 'total',
                                                day_range=30,
                                                multiple_apps=True,
@@ -46,7 +46,20 @@ def update_currency(value):
     return d_table.to_dict('records'), date_str
 
 
-@app.callback(Output('total', 'figure'), [Input('apps_choice', 'value'), Input('total_date_range', 'value')])
+@app.callback([Output('apps_choice', 'options')],
+              [Input('team_selector', 'value')])
+def update_apps_selection(selector_team):
+    return [get_apps_options(selector_team=selector_team)]
+
+
+@app.callback([Output('apps_choice', 'value')],
+              [Input('apps_choice', 'options')])
+def update_apps_selection(options):
+    return [[dictionary.get('value') for dictionary in options]]
+
+
+@app.callback(Output('total', 'figure'), [Input('apps_choice', 'value'),
+                                          Input('total_date_range', 'value')])
 def update_apps_selection(apps_list, day_range):
     return get_app_fig(data, 'total', day_range=day_range, multiple_apps=True, apps_list=apps_list)
 
@@ -121,6 +134,11 @@ def update_date_range(value):
     return get_app_fig(data, 'Walk_K', day_range=value)
 
 
+@app.callback(Output('RunFast_K', 'figure'), [Input('RunFast_K_date_range', 'value')])
+def update_date_range(value):
+    return get_app_fig(data, 'RunFast_K', day_range=value)
+
+
 @app.callback(Output('Mars_K', 'figure'), [Input('Mars_K_date_range', 'value')])
 def update_date_range(value):
     return get_app_fig(data, 'Mars_K', day_range=value)
@@ -148,4 +166,4 @@ def update_date_range(value):
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 8050))
-    app.run_server(debug=False, host='0.0.0.0', port=port)
+    app.run_server(debug=True, host='0.0.0.0', port=port)

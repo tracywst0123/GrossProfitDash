@@ -20,8 +20,7 @@ APP_LIST = [('Space_K', 'com.oneapp.max.cleaner.booster.cn'),
             ('Amber_K', 'com.diamond.coin.cn'),
             ('River_K', 'com.crazystone.coin.cn'),
             ('Walk_K', 'com.walk.sports.cn'),
-            # todo: RunFast
-            # ('RunFast_K', 'com.run.sports.cn'),
+            ('RunFast_K', 'com.run.sports.cn'),
             ('Mars_K', 'com.cyqxx.puzzle.idiom.cn'),
             ('Athena', '1503126294'),
             ('Apollo_K', 'com.yqs.cn'),
@@ -29,29 +28,26 @@ APP_LIST = [('Space_K', 'com.oneapp.max.cleaner.booster.cn'),
             ('Ares_K', 'com.idiom.tjj.cn')]
 
 APPS = ['Space_K', 'PrivacyPowerPro_K', 'Optimizer_K', 'FastClear_K', 'Normandy_K', '500_K', 'Cookie_K',
-        'ColorPhone_K', 'DogRaise_K', 'Rat_K', 'LuckyDog_K', 'Amber_K', 'River_K', 'Walk_K',
-        # todo: RunFast
-        # 'RunFast',
+        'ColorPhone_K', 'DogRaise_K', 'Rat_K', 'LuckyDog_K', 'Amber_K', 'River_K', 'Walk_K', 'RunFast_K',
         'Mars_K', 'Athena', 'Apollo_K', 'Poseidon_K', 'Ares_K']
 
-TEAM_APPS = {'总': ['Space_K', 'PrivacyPowerPro_K', 'Optimizer_K', 'FastClear_K', '500_K', 'Cookie_K',
-                   'ColorPhone_K', 'DogRaise_K', 'Rat_K', 'LuckyDog_K', 'Amber_K', 'River_K', 'Walk_K',
-                   'Mars_K', 'Athena', 'Apollo_K', 'Poseidon_K', 'Ares_K'],
-             # todo: RunFast
-             # , 'RunFast_K'
-             '010': ['Space_K', 'PrivacyPowerPro_K', 'Optimizer_K', 'FastClear_K', 'Amber_K', 'Walk_K', 'River_K'],
+TEAM_APPS = {'total': ['Space_K', 'PrivacyPowerPro_K', 'Optimizer_K', 'FastClear_K', '500_K', 'Cookie_K',
+                       'ColorPhone_K', 'DogRaise_K', 'Rat_K', 'LuckyDog_K', 'Amber_K', 'River_K', 'Walk_K', 'RunFast_K',
+                       'Mars_K', 'Athena', 'Apollo_K', 'Poseidon_K', 'Ares_K'],
+             '010': ['Space_K', 'PrivacyPowerPro_K', 'Optimizer_K', 'FastClear_K', 'Amber_K', 'Walk_K',
+                     'River_K', 'RunFast_K'],
              '075': ['Mars_K', 'Athena', 'Apollo_K', 'Poseidon_K', 'Ares_K'],
              '060': ['500_K', 'Cookie_K', 'ColorPhone_K', 'DogRaise_K', 'Rat_K', 'LuckyDog_K'],
              '080': ['Normandy_K']}
 
 RMBperDOLLAR = 6.7
 
-TEAM_TAR = {'总': 80000*RMBperDOLLAR,
+TEAM_TAR = {'total': 80000*RMBperDOLLAR,
             '010': 40000*RMBperDOLLAR,
             '075': 20000*RMBperDOLLAR,
             '060': 20000*RMBperDOLLAR,
             '080': 5000*RMBperDOLLAR}
-TEAMS = ['总', '010', '075', '060', '080']
+TEAMS = ['total', '010', '075', '060', '080']
 
 Q_START = datetime.datetime(2020, 10, 1)
 
@@ -170,14 +166,23 @@ def draw_diverging_profit(data, name):
     return fig
 
 
-def get_apps_checklist(selector_app, selector_team=None):
-    # teams = [{'label': '010', 'value': TEAM_APPS.get('010')},
-    #          {'label': '060', 'value': TEAM_APPS.get('060')}, {
-    #              'label': '075', 'value': TEAM_APPS.get('075')}]
-    options = [{'label': app, 'value': app} for app in APPS]
+def get_team_selector(team='total'):
+    return dcc.RadioItems(id='team_selector',
+                          options=[{'label': 'total', 'value': 'total'},
+                                   {'label': '010', 'value': '010'},
+                                   {'label': '060', 'value': '060'},
+                                   {'label': '075', 'value': '075'}],
+                          value=team)
 
-    # return dcc.Checklist(id=selector_team, options=teams, value=APPS),\
-    return dcc.Checklist(id=selector_app, options=options, value=APPS)
+
+def get_apps_options(selector_team='total'):
+    return [{'label': app, 'value': app} for app in TEAM_APPS.get(selector_team)]
+
+
+def get_apps_checklist(checklist_id, selector_team='total'):
+    return dcc.Checklist(id=checklist_id,
+                         options=get_apps_options(selector_team),
+                         value=TEAM_APPS.get(selector_team))
 
 
 def data_loader(cost_path='cost.csv', revenue_path='revenue.csv'):

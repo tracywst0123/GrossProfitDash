@@ -52,14 +52,6 @@ if __name__ == '__main__':
     print(cost)
     cost.to_csv(cost_path)
 
-    # cost_path = 'cost.csv'
-    # cost = pd.read_csv(cost_path)
-    # cost['date'] = pd.to_datetime(cost['date'])
-    # cost = cost.sort_values(by=['date'])
-    # cost = cost[['app', 'date', 'spend']]
-    # cost.to_csv(cost_path)
-    # print(pd.read_csv(cost_path))
-
     revenue_new_path = '/Users/tracy/Desktop/revenue_new.csv'
     revenue_new = pd.read_csv(revenue_new_path)
     revenue_new = clean_earnings(revenue_new)
