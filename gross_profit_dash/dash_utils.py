@@ -185,7 +185,8 @@ def get_apps_checklist(checklist_id, selector_team='total'):
                          value=TEAM_APPS.get(selector_team))
 
 
-def data_loader(cost_path='cost.csv', revenue_path='revenue.csv'):
+def data_loader(cost_path='/Users/tracy/PycharmProjects/GrossProfitDash/data/cost.csv',
+                revenue_path='/Users/tracy/PycharmProjects/GrossProfitDash/data/revenue.csv'):
     cost = pd.read_csv(cost_path)
     cost['date'] = cost['date'].apply(pd.to_datetime)
 

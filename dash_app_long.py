@@ -3,7 +3,7 @@ import os
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
-from utils import get_app_fig, data_loader, get_selector_graph_combo, APPS, get_apps_checklist, \
+from dash_utils import get_app_fig, data_loader, get_selector_graph_combo, APPS, get_apps_checklist, \
     quarter_target_table, get_currency_selector, get_table, get_team_selector, get_apps_options, TEAM_APPS
 
 
@@ -23,7 +23,7 @@ def construct_html_children(init_data, total_graph_app_list=APPS, app_list=APPS)
     return graph_list
 
 
-data = data_loader()
+data = None
 app = dash.Dash()
 
 
@@ -166,4 +166,4 @@ def update_date_range(value):
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 8050))
-    app.run_server(debug=True, host='0.0.0.0', port=port)
+    app.run_server(debug=False, host='0.0.0.0', port=port)
