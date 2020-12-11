@@ -1,5 +1,5 @@
 import pandas as pd
-from dash_utils import data_loader, quarter_target_table
+from gross_profit_dash_app.dash_utils import data_loader, quarter_target_table
 
 
 def convert_excel_time(excel_time):

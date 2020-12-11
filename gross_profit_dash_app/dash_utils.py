@@ -1,63 +1,15 @@
-import numpy as np
 import pandas as pd
 import datetime
 import plotly.graph_objects as go
 import dash_core_components as dcc
 import dash_table
 
-
-APP_LIST = [('Space_K', 'com.oneapp.max.cleaner.booster.cn'),
-            ('PrivacyPowerPro_K', 'com.oneapp.max.security.pro.cn'),
-            ('Optimizer_K', 'com.oneapp.max.cn'),
-            ('FastClear_K', 'com.boost.clean.coin.cn'),
-            ('Normandy_K', 'com.normandy.booster.cn'),
-            ('500_K', 'com.honeycomb.launcher.cn'),
-            ('Cookie_K', 'com.emoticon.screen.home.launcher.cn'),
-            ('ColorPhone_K', 'com.colorphone.smooth.dialer.cn'),
-            ('DogRaise_K', 'com.dograise.richman.cn'),
-            ('Rat_K', 'com.rat.countmoney.cn'),
-            ('LuckyDog_K', 'com.fortunedog.cn'),
-            ('Amber_K', 'com.diamond.coin.cn'),
-            ('River_K', 'com.crazystone.coin.cn'),
-            ('Walk_K', 'com.walk.sports.cn'),
-            ('RunFast_K', 'com.run.sports.cn'),
-            ('Mars_K', 'com.cyqxx.puzzle.idiom.cn'),
-            ('Athena', '1503126294'),
-            ('Apollo_K', 'com.yqs.cn'),
-            ('Poseidon_K', 'com.lightyear.dccj'),
-            ('Ares_K', 'com.idiom.tjj.cn')]
-
-APPS = ['Space_K', 'PrivacyPowerPro_K', 'Optimizer_K', 'FastClear_K', 'Normandy_K', '500_K', 'Cookie_K',
-        'ColorPhone_K', 'DogRaise_K', 'Rat_K', 'LuckyDog_K', 'Amber_K', 'River_K', 'Walk_K', 'RunFast_K',
-        'Mars_K', 'Athena', 'Apollo_K', 'Poseidon_K', 'Ares_K']
-
-TEAM_APPS = {'total': ['Space_K', 'PrivacyPowerPro_K', 'Optimizer_K', 'FastClear_K', '500_K', 'Cookie_K',
-                       'ColorPhone_K', 'DogRaise_K', 'Rat_K', 'LuckyDog_K', 'Amber_K', 'River_K', 'Walk_K', 'RunFast_K',
-                       'Mars_K', 'Athena', 'Apollo_K', 'Poseidon_K', 'Ares_K'],
-             '010': ['Space_K', 'PrivacyPowerPro_K', 'Optimizer_K', 'FastClear_K', 'Amber_K', 'Walk_K',
-                     'River_K', 'RunFast_K'],
-             '075': ['Mars_K', 'Athena', 'Apollo_K', 'Poseidon_K', 'Ares_K'],
-             '060': ['500_K', 'Cookie_K', 'ColorPhone_K', 'DogRaise_K', 'Rat_K', 'LuckyDog_K'],
-             '080': ['Normandy_K']}
-
-RMBperDOLLAR = 6.7
-
-TEAM_TAR = {'total': 80000*RMBperDOLLAR,
-            '010': 40000*RMBperDOLLAR,
-            '075': 20000*RMBperDOLLAR,
-            '060': 20000*RMBperDOLLAR,
-            '080': 5000*RMBperDOLLAR}
-TEAMS = ['total', '010', '075', '060', '080']
-
-Q_START = datetime.datetime(2020, 10, 1)
-
-TABLE_COLS = ['Team', '  季度目标', '  日均目标', '已完成利润', '平均日利润', '平均利润差', '剩余季度目标', '剩余日目标',
-              ' 平均日收入', ' 平均日消耗', ' 昨日组收入', ' 昨日组消耗']
+from gross_profit_dash_app.data_config import Q_START, TABLE_COLS, RMBperDOLLAR, TEAMS, TEAM_APPS, TEAM_TAR
 
 
 def quarter_target_table(data, rmb=False, q_start=Q_START):
     d_table = pd.DataFrame(columns=TABLE_COLS)
-    data['profit'] = data['earnings'] - data['spend']
+    data['profit'] = data['earnings'] - data['spend'] - data['pay']
     data = data[data['date'] >= q_start]
 
     dates = data.date.unique()
@@ -155,12 +107,13 @@ def get_app_fig(data, app_name, day_range, multiple_apps=False, apps_list=None):
 
 def draw_diverging_profit(data, name):
     x = data.date
-    sum_xy = data.earnings - data.spend
+    sum_xy = data.earnings - data.spend - data.pay
     fig = go.Figure()
     fig.add_trace(go.Bar(x=x, y=data.earnings, name='Profit'))
     fig.add_trace(go.Bar(x=x, y=-data.spend, name='Cost'))
     fig.add_trace(go.Scatter(x=x, y=sum_xy, mode='lines+markers', name='Gross'))
-    gross_profit = int(sum(data.earnings) - sum(data.spend))
+    fig.add_trace(go.Bar(x=x, y=-data.pay, name='Withdraw'))
+    gross_profit = int(sum(data.earnings) - sum(data.spend) - sum(data.pay))
     fig.update_layout(barmode='relative',
                       title_text=name+'      = '+str(gross_profit))
     return fig
@@ -186,17 +139,22 @@ def get_apps_checklist(checklist_id, selector_team='total'):
 
 
 def data_loader(cost_path='/Users/tracy/PycharmProjects/GrossProfitDash/data/cost.csv',
-                revenue_path='/Users/tracy/PycharmProjects/GrossProfitDash/data/revenue.csv'):
+                revenue_path='/Users/tracy/PycharmProjects/GrossProfitDash/data/revenue.csv',
+                pay_path='/Users/tracy/PycharmProjects/GrossProfitDash/data/pay.csv'):
     cost = pd.read_csv(cost_path)
     cost['date'] = cost['date'].apply(pd.to_datetime)
 
     revenue = pd.read_csv(revenue_path)
     revenue['date'] = revenue['date'].apply(pd.to_datetime)
 
-    data = pd.merge(cost, revenue, on=['date', 'app'])
-    data = data[['date', 'app', 'spend', 'earnings']]
+    pay = pd.read_csv(pay_path)
+    pay['date'] = pay['date'].apply(pd.to_datetime)
+
+    left = pd.merge(cost, revenue, on=['date', 'app'])
+    data = pd.merge(left, pay, on=['date', 'app'], how='left').fillna(0)
+    data = data[['date', 'app', 'spend', 'earnings', 'pay']]
     data = data.sort_values(by=['date'])
-    # with pd.option_context('display.max_rows', None, 'display.max_columns', None):
-    #     print(data)
+
     return data
+
 

@@ -1,10 +1,9 @@
 import dash
 import os
-import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
-from dash_utils import get_app_fig, data_loader, get_selector_graph_combo, APPS, get_apps_checklist, \
-    quarter_target_table, get_currency_selector, get_table, get_team_selector, get_apps_options, TEAM_APPS
+from gross_profit_dash_app.dash_utils import get_app_fig, data_loader, get_selector_graph_combo, APPS, get_apps_checklist, \
+    quarter_target_table, get_currency_selector, get_table, get_team_selector, get_apps_options
 
 
 def construct_html_children(init_data, total_graph_app_list=APPS, app_list=APPS):
