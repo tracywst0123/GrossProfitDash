@@ -1,1 +1,1 @@
-web: python dash_app_long.py
+web: python --chdir gross_profit_dash_app app.py
