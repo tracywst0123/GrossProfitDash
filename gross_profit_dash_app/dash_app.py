@@ -122,7 +122,6 @@ def init_callbacks(app):
     @app.callback(Output('Rat_K', 'figure'),
                   [Input('Rat_K_date_range', 'value'), Input('hidden_data', 'children')])
     def update_date_range(value, jdata):
-        print('updating rat')
         return get_app_fig(pd.read_json(jdata), 'Rat_K', day_range=value)
 
     @app.callback(Output('LuckyDog_K', 'figure'),

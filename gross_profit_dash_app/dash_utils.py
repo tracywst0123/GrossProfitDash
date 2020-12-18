@@ -26,7 +26,7 @@ def quarter_target_table(data, rmb=False, q_start=Q_START):
         data_team = data[data['app'].isin(apps)]
 
         day_revenue = data_team.earnings.sum()/day_range  # 平均日收入
-        day_cost = data_team.spend.sum()/day_range        # 平均日消耗
+        day_cost = (data_team.spend.sum() + data_team.pay.sum())/day_range  # 平均日消耗
 
         day_target = TEAM_TAR.get(team)              # 日均目标
         q_done = data_team.profit.sum()              # 已完成利润
@@ -38,7 +38,7 @@ def quarter_target_table(data, rmb=False, q_start=Q_START):
 
         last_day_data = data_team[data_team['date'] >= dates[-1]]
         last_day_revenue = last_day_data.earnings.sum()  # 昨日组收入
-        last_day_cost = last_day_data.spend.sum()        # 昨日组消耗
+        last_day_cost = last_day_data.spend.sum() + last_day_data.pay.sum()  # 昨日组消耗
 
         values = [team]
         values.extend([int(v/div_factor) for v in [q_target, day_target, q_done, day_done, day_diff, q_todo, day_todo,

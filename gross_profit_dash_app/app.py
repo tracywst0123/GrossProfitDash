@@ -28,6 +28,10 @@ def register_login_manager(login_manager):
 
         return user
 
+    @login_manager.unauthorized_handler
+    def unauthorized_callback():
+        return flask.redirect('/login?next=' + flask.request.path)
+
 
 def protect_dash(dash_app):
     for view_func in dash_app.server.view_functions:
@@ -50,7 +54,7 @@ def create_app():
     login_manager.init_app(app)
     register_login_manager(login_manager)
 
-    register_permanent_session(app)
+    # register_permanent_session(app)
 
     app_dash = init_dashboard(app)
     protect_dash(app_dash)
