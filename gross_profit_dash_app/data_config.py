@@ -19,20 +19,23 @@ APP_LIST = [('Space_K', 'com.oneapp.max.cleaner.booster.cn'),
             ('Athena', '1503126294'),
             ('Apollo_K', 'com.yqs.cn'),
             ('Poseidon_K', 'com.lightyear.dccj'),
-            ('Ares_K', 'com.idiom.tjj.cn')]
+            ('Ares_K', 'com.idiom.tjj.cn'),
+            ('Coffee_K', 'com.drinkwater.health.coin.cn'),
+            ('Emperor_K', 'com.waytoemperor.cn')]
 
 APPS = ['Space_K', 'PrivacyPowerPro_K', 'Optimizer_K', 'FastClear_K', 'Normandy_K', '500_K', 'Cookie_K',
-        'ColorPhone_K', 'DogRaise_K', 'Rat_K', 'LuckyDog_K', 'Amber_K', 'River_K', 'Walk_K', 'RunFast_K',
-        'Mars_K', 'Athena', 'Apollo_K', 'Poseidon_K', 'Ares_K']
+        'ColorPhone_K', 'DogRaise_K', 'Rat_K', 'LuckyDog_K', 'Amber_K', 'River_K',
+        'Walk_K', 'RunFast_K', 'Coffee_K',
+        'Mars_K', 'Athena', 'Apollo_K', 'Poseidon_K', 'Ares_K', 'Emperor_K']
 
 TEAM_APPS = {'total': ['Space_K', 'PrivacyPowerPro_K', 'Optimizer_K', 'FastClear_K', '500_K', 'Cookie_K',
                        'ColorPhone_K', 'DogRaise_K', 'Rat_K', 'LuckyDog_K', 'Amber_K', 'River_K', 'Walk_K', 'RunFast_K',
-                       'Mars_K', 'Athena', 'Apollo_K', 'Poseidon_K', 'Ares_K'],
+                       'Coffee_K', 'Mars_K', 'Athena', 'Apollo_K', 'Poseidon_K', 'Ares_K', 'Emperor_K'],
              '010': ['Space_K', 'PrivacyPowerPro_K', 'Optimizer_K', 'FastClear_K', 'Amber_K', 'Walk_K',
-                     'River_K', 'RunFast_K'],
+                     'River_K', 'RunFast_K', 'Coffee_K'],
              '075': ['Mars_K', 'Athena', 'Apollo_K', 'Poseidon_K', 'Ares_K'],
              '060': ['500_K', 'Cookie_K', 'ColorPhone_K', 'DogRaise_K', 'Rat_K', 'LuckyDog_K'],
-             '080': ['Normandy_K']}
+             '080': ['Normandy_K', 'Emperor_K']}
 
 RMBperDOLLAR = 6.7
 

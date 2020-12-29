@@ -149,6 +149,11 @@ def init_callbacks(app):
     def update_date_range(value, jdata):
         return get_app_fig(pd.read_json(jdata), 'RunFast_K', day_range=value)
 
+    @app.callback(Output('Coffee_K', 'figure'),
+                  [Input('Coffee_K_date_range', 'value'), Input('hidden_data', 'children')])
+    def update_date_range(value, jdata):
+        return get_app_fig(pd.read_json(jdata), 'Coffee_K', day_range=value)
+
     @app.callback(Output('Mars_K', 'figure'),
                   [Input('Mars_K_date_range', 'value'), Input('hidden_data', 'children')])
     def update_date_range(value, jdata):
