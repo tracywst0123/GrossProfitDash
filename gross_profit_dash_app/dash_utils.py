@@ -87,8 +87,7 @@ def init_date(day_range=30):
 
 
 def get_time_selector(app):
-    selector_id = app + '_date_range'
-    return dcc.RadioItems(id=selector_id,
+    return dcc.RadioItems(id=app + '_date_range',
                           options=[{'label': '30 天', 'value': 30},
                                    {'label': '60 天', 'value': 60},
                                    {'label': '90 天', 'value': 90}],
