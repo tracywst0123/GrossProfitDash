@@ -39,14 +39,20 @@ TEAM_APPS = {'total': ['Space_K', 'PrivacyPowerPro_K', 'Optimizer_K', 'FastClear
 
 RMBperDOLLAR = 6.7
 
-TEAM_TAR = {'total': 100000*RMBperDOLLAR,
+Q_TAR = {'total': 100000*RMBperDOLLAR,
+         '010': 30000*RMBperDOLLAR,
+         '075': 40000*RMBperDOLLAR,
+         '060': 30000*RMBperDOLLAR,
+         '080': 5000*RMBperDOLLAR}
+
+YEAR_TAR = {'total': 145000*RMBperDOLLAR,
             '010': 40000*RMBperDOLLAR,
-            '075': 40000*RMBperDOLLAR,
-            '060': 20000*RMBperDOLLAR,
+            '075': 60000*RMBperDOLLAR,
+            '060': 40000*RMBperDOLLAR,
             '080': 5000*RMBperDOLLAR}
-TEAMS = ['total', '010', '075', '060', '080']
+
+TEAMS = ['total', '075', '010', '060', '080']
 
 Q_START = datetime.datetime(2021, 1, 1)
+YEAR_START = datetime.datetime(2021, 1, 1)
 
-TABLE_COLS = ['Team', '  季度目标', '  日均目标', '已完成利润', '平均日利润', '平均利润差', '剩余季度目标', '剩余日目标',
-              ' 平均日收入', ' 平均日消耗', ' 昨日组收入', ' 昨日组消耗']

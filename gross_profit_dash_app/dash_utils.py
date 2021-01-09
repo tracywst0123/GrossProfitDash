@@ -4,13 +4,17 @@ import plotly.graph_objects as go
 import dash_core_components as dcc
 import dash_table
 
-from gross_profit_dash_app.data_config import Q_START, TABLE_COLS, RMBperDOLLAR, TEAMS, TEAM_APPS, TEAM_TAR
+from gross_profit_dash_app.data_config import RMBperDOLLAR, TEAMS, TEAM_APPS, \
+    Q_START, Q_TAR, YEAR_TAR, YEAR_START
+
+TABLE_COLS = ['Team', '  季度目标', '  日均目标', '已完成利润', '平均日利润', '平均利润差', '剩余季度目标', '剩余日目标',
+              ' 平均日收入', ' 平均日消耗', ' 昨日组收入', ' 昨日组消耗']
 
 
-def quarter_target_table(data, rmb=False, q_start=Q_START, teams=TEAMS):
+def quarter_target_table(data, rmb=False, start_date=Q_START, total_dates=90, teams=TEAMS, team_tar=Q_TAR):
     d_table = pd.DataFrame(columns=TABLE_COLS)
     data['profit'] = data['earnings'] - data['spend'] - data['pay']
-    data = data[data['date'] >= q_start]
+    data = data[data['date'] >= start_date]
 
     dates = data.date.unique()
     dates_str = str(dates[0])[:10] + ' ~ ' + str(dates[-1])[:10]
@@ -28,13 +32,13 @@ def quarter_target_table(data, rmb=False, q_start=Q_START, teams=TEAMS):
         day_revenue = data_team.earnings.sum()/day_range  # 平均日收入
         day_cost = (data_team.spend.sum() + data_team.pay.sum())/day_range  # 平均日消耗
 
-        day_target = TEAM_TAR.get(team)              # 日均目标
+        day_target = team_tar.get(team)              # 日均目标
         q_done = data_team.profit.sum()              # 已完成利润
-        q_target = 90 * day_target                   # 季度目标
+        q_target = total_dates * day_target                   # 季度目标
         day_done = q_done/day_range                  # 平均日利润
         day_diff = (day_target*day_range - q_done)/day_range  # 平均利润差
         q_todo = q_target - q_done                   # 剩余季度目标
-        day_todo = q_todo/(90 - day_range)           # 剩余日目标
+        day_todo = q_todo/(total_dates - day_range)           # 剩余日目标
 
         last_day_data = data_team[data_team['date'] >= dates[-1]]
         last_day_revenue = last_day_data.earnings.sum()  # 昨日组收入
@@ -48,9 +52,20 @@ def quarter_target_table(data, rmb=False, q_start=Q_START, teams=TEAMS):
     return d_table, dates_str
 
 
-def get_table(data, rmb=False, teams=TEAMS):
-    dd_table, date_str = quarter_target_table(data, rmb=rmb, teams=teams)
-    d_table = dash_table.DataTable(id='team_profit_table',
+def get_table(data, rmb=False, QuarterOrYear=True, teams=TEAMS):
+    if QuarterOrYear:
+        start = Q_START
+        total_dates = 90
+        tableID = 'q_team_profit_table'
+        team_tar = Q_TAR
+    else:
+        start = YEAR_START
+        total_dates = 365
+        tableID = 'y_team_profit_table'
+        team_tar = YEAR_TAR
+    dd_table, date_str = quarter_target_table(data, rmb=rmb, teams=teams, start_date=start,
+                                              total_dates=total_dates, team_tar=team_tar)
+    d_table = dash_table.DataTable(id=tableID,
                                    columns=[{'id': c, 'name': c} for c in TABLE_COLS],
                                    data=dd_table.to_dict('records'),
                                    style_table={'width': '90%'},

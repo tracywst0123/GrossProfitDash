@@ -2,14 +2,18 @@ import pandas as pd
 import dash
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
-from gross_profit_dash_app.data_config import APPS, TEAMS, TEAM_APPS
+from gross_profit_dash_app.data_config import APPS, TEAMS, TEAM_APPS, YEAR_START, YEAR_TAR
 from gross_profit_dash_app.dash_utils import get_app_fig, data_loader, get_selector_graph_combo, get_apps_checklist, \
     quarter_target_table, get_currency_selector, get_table, get_team_selector, get_apps_options
 
-
 def construct_html_children(init_data, authority_teams=TEAMS, app_list=APPS):
-    d_table, date_str = get_table(init_data, teams=authority_teams)
-    children_list = [html.H5(id='table_id', children=date_str), get_currency_selector(), d_table, html.Br(), html.Br()]
+    q_d_table, q_date_str = get_table(init_data, teams=authority_teams, QuarterOrYear=True)
+    y_d_table, y_date_str = get_table(init_data, teams=authority_teams, QuarterOrYear=False)
+    children_list = [html.Br(), html.Br(), get_currency_selector(),
+                     html.H5(children='季度目标'),
+                     html.H5(id='q_table_id', children=q_date_str), q_d_table, html.Br(), html.Br(),
+                     html.H5(children='年度目标'),
+                     html.H5(id='y_table_id', children=q_date_str), y_d_table, html.Br(), html.Br()]
 
     children_list.extend([get_team_selector(teams_list=authority_teams, default_team=authority_teams[0]),
                           get_apps_checklist('apps_choice', default_team=authority_teams[0]), html.Br(), html.Br()])
@@ -64,13 +68,24 @@ def init_callbacks(app, combo=True, combo_team=TEAMS, app_list=APPS):
         return [new_data.to_json()]
 
     if combo:
-        @app.callback([Output('team_profit_table', 'data'), Output('table_id', 'children')],
+        @app.callback([Output('q_team_profit_table', 'data'), Output('q_table_id', 'children')],
                       [Input('currency', 'value'), Input('hidden_data', 'children')])
         def update_currency(value, jdata):
             if value == 'RMB':
                 d_table, date_str = quarter_target_table(pd.read_json(jdata), rmb=True, teams=combo_team)
             else:
                 d_table, date_str = quarter_target_table(pd.read_json(jdata), rmb=False, teams=combo_team)
+            return d_table.to_dict('records'), date_str
+
+        @app.callback([Output('y_team_profit_table', 'data'), Output('y_table_id', 'children')],
+                      [Input('currency', 'value'), Input('hidden_data', 'children')])
+        def update_currency(value, jdata):
+            if value == 'RMB':
+                d_table, date_str = quarter_target_table(pd.read_json(jdata), rmb=True, teams=combo_team,
+                                                         start_date=YEAR_START, total_dates=365, team_tar=YEAR_TAR)
+            else:
+                d_table, date_str = quarter_target_table(pd.read_json(jdata), rmb=False, teams=combo_team,
+                                                         start_date=YEAR_START, total_dates=365, team_tar=YEAR_TAR)
             return d_table.to_dict('records'), date_str
 
         @app.callback([Output('apps_choice', 'options')],
