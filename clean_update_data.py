@@ -1,5 +1,5 @@
 import pandas as pd
-from gross_profit_dash_app.data_config import APP_LIST
+from gross_profit_dash_app.data_config import BUNDLE_LIST
 
 
 def clean_earnings(df=None, path='/Users/tracy/Desktop/revenue_new.csv'):
@@ -18,7 +18,7 @@ def clean_earnings(df=None, path='/Users/tracy/Desktop/revenue_new.csv'):
 def clean_cost_pay(df, path='/Users/tracy/Desktop/cost_pay_new.csv'):
     df.to_csv(path)
     df = pd.read_csv(path)
-    invert_app = {j: i for (i, j) in APP_LIST}
+    invert_app = {j: i for (i, j) in BUNDLE_LIST}
     df = df.rename(columns={'bundle_id': 'app'})
     df['app'] = df['app'].map(invert_app)
     df['date'] = pd.to_datetime(df['date'])

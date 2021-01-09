@@ -7,7 +7,7 @@ import dash_table
 from gross_profit_dash_app.data_config import Q_START, TABLE_COLS, RMBperDOLLAR, TEAMS, TEAM_APPS, TEAM_TAR
 
 
-def quarter_target_table(data, rmb=False, q_start=Q_START):
+def quarter_target_table(data, rmb=False, q_start=Q_START, teams=TEAMS):
     d_table = pd.DataFrame(columns=TABLE_COLS)
     data['profit'] = data['earnings'] - data['spend'] - data['pay']
     data = data[data['date'] >= q_start]
@@ -21,7 +21,7 @@ def quarter_target_table(data, rmb=False, q_start=Q_START):
     else:
         div_factor = RMBperDOLLAR
 
-    for team in TEAMS:
+    for team in teams:
         apps = TEAM_APPS.get(team)
         data_team = data[data['app'].isin(apps)]
 
@@ -30,11 +30,11 @@ def quarter_target_table(data, rmb=False, q_start=Q_START):
 
         day_target = TEAM_TAR.get(team)              # 日均目标
         q_done = data_team.profit.sum()              # 已完成利润
-        q_target = 92 * day_target                   # 季度目标
+        q_target = 90 * day_target                   # 季度目标
         day_done = q_done/day_range                  # 平均日利润
         day_diff = (day_target*day_range - q_done)/day_range  # 平均利润差
         q_todo = q_target - q_done                   # 剩余季度目标
-        day_todo = q_todo/(92 - day_range)           # 剩余日目标
+        day_todo = q_todo/(90 - day_range)           # 剩余日目标
 
         last_day_data = data_team[data_team['date'] >= dates[-1]]
         last_day_revenue = last_day_data.earnings.sum()  # 昨日组收入
@@ -48,8 +48,8 @@ def quarter_target_table(data, rmb=False, q_start=Q_START):
     return d_table, dates_str
 
 
-def get_table(data, rmb=False):
-    dd_table, date_str = quarter_target_table(data, rmb=rmb)
+def get_table(data, rmb=False, teams=TEAMS):
+    dd_table, date_str = quarter_target_table(data, rmb=rmb, teams=teams)
     d_table = dash_table.DataTable(id='team_profit_table',
                                    columns=[{'id': c, 'name': c} for c in TABLE_COLS],
                                    data=dd_table.to_dict('records'),
@@ -118,23 +118,20 @@ def draw_diverging_profit(data, name):
     return fig
 
 
-def get_team_selector(team='total'):
+def get_team_selector(teams_list=TEAMS, default_team='total'):
     return dcc.RadioItems(id='team_selector',
-                          options=[{'label': 'total', 'value': 'total'},
-                                   {'label': '010', 'value': '010'},
-                                   {'label': '060', 'value': '060'},
-                                   {'label': '075', 'value': '075'}],
-                          value=team)
+                          options=[{'label': team, 'value': team} for team in teams_list],
+                          value=default_team)
 
 
-def get_apps_options(selector_team='total'):
-    return [{'label': app, 'value': app} for app in TEAM_APPS.get(selector_team)]
+def get_apps_options(default_team='total'):
+    return [{'label': app, 'value': app} for app in TEAM_APPS.get(default_team)]
 
 
-def get_apps_checklist(checklist_id, selector_team='total'):
+def get_apps_checklist(checklist_id, default_team='total'):
     return dcc.Checklist(id=checklist_id,
-                         options=get_apps_options(selector_team),
-                         value=TEAM_APPS.get(selector_team))
+                         options=get_apps_options(default_team),
+                         value=TEAM_APPS.get(default_team))
 
 
 def data_loader(cost_path='/Users/tracy/PycharmProjects/GrossProfitDash/data/cost.csv',
