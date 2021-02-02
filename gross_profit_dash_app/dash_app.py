@@ -6,12 +6,13 @@ from gross_profit_dash_app.data_config import APPS, TEAMS, TEAM_APPS, YEAR_START
 from gross_profit_dash_app.dash_utils import get_app_fig, data_loader, get_selector_graph_combo, get_apps_checklist, \
     quarter_target_table, get_currency_selector, get_table, get_team_selector, get_apps_options
 
+
 def construct_html_children(init_data, authority_teams=TEAMS, app_list=APPS):
     q_d_table, q_date_str = get_table(init_data, teams=authority_teams, QuarterOrYear=True)
     y_d_table, y_date_str = get_table(init_data, teams=authority_teams, QuarterOrYear=False)
     children_list = [html.Br(), html.Br(), get_currency_selector(),
                      html.H5(children='季度目标'),
-                     html.H5(id='q_table_id', children=q_date_str), q_d_table, html.Br(), html.Br(),
+                     html.H5(id='q_table_id', children=q_date_str), q_d_table, html.Br(),
                      html.H5(children='年度目标'),
                      html.H5(id='y_table_id', children=q_date_str), y_d_table, html.Br(), html.Br()]
 
@@ -41,14 +42,18 @@ def get_layout(data, authority_teams=TEAMS, app_list=APPS):
                     id='dash_container')
 
 
-def init_dashboard(server, data=None, url_base='/dash/', authority_teams=TEAMS):
+def init_dashboard(server, url_base='/dash/'):
     """Create a Plotly Dash dashboard."""
     dash_app = dash.Dash(server=server, url_base_pathname=url_base)
+    return dash_app
+
+
+def register_layout_callbacks(dash_app, data=None, authority_teams=TEAMS):
     if not data:
         data = data_loader()
 
     if 'total' in authority_teams:
-        app_list = TEAM_APPS.get('total')
+        app_list = APPS
     else:
         app_list = []
         for tt in TEAMS:

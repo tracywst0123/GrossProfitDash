@@ -3,7 +3,7 @@ from datetime import timedelta
 import flask
 from flask_login import LoginManager, login_required
 
-from gross_profit_dash_app.dash_app import init_dashboard
+from gross_profit_dash_app.dash_app import init_dashboard, register_layout_callbacks
 from gross_profit_dash_app.users import User, UserDict
 from gross_profit_dash_app.routes import register_routes
 
@@ -57,6 +57,7 @@ def create_app():
     # register_permanent_session(app)
 
     app_dash = init_dashboard(app)
+    app_dash = register_layout_callbacks(app_dash, authority_teams=['total', '075', '010', '060', '080'])
     protect_dash(app_dash)
 
     register_routes(app)

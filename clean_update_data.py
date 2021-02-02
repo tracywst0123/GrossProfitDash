@@ -9,6 +9,7 @@ def clean_earnings(df=None, path='/Users/tracy/Desktop/revenue_new.csv'):
     df = df.rename(columns={'App': 'app', 'Date': 'date'})
     df = df[['app', 'date', 'earnings']]
     df['date'] = pd.to_datetime(df['date'])
+    df = df.groupby(by=['app', 'date']).sum()
     df = df.sort_values(by=['date'])
     df.to_csv(path)
     df = pd.read_csv(path)
