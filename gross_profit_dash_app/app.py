@@ -57,7 +57,7 @@ def create_app():
     # register_permanent_session(app)
 
     app_dash = init_dashboard(app)
-    app_dash = register_layout_callbacks(app_dash, authority_teams=['total', '075', '010', '060', '050', '080'])
+    app_dash = register_layout_callbacks(app_dash, authority_teams=['total', '075', '010', '060', '050', '045', '080'])
     protect_dash(app_dash)
 
     register_routes(app)

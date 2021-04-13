@@ -38,7 +38,10 @@ def quarter_target_table(data, rmb=False, start_date=Q_START, total_dates=90, te
         day_done = q_done/day_range                  # 平均日利润
         day_diff = (day_target*day_range - q_done)/day_range  # 平均利润差
         q_todo = q_target - q_done                   # 剩余季度目标
-        day_todo = q_todo/(total_dates - day_range)           # 剩余日目标
+        if total_dates == day_range:
+            day_todo = q_todo / 1
+        else:
+            day_todo = q_todo / (total_dates - day_range)  # 剩余日目标
 
         last_day_data = data_team[data_team['date'] >= dates[-1]]
         last_day_revenue = last_day_data.earnings.sum()  # 昨日组收入
@@ -68,6 +71,7 @@ def get_table(data, rmb=False, QuarterOrYear=True, teams=TEAMS):
     d_table = dash_table.DataTable(id=tableID,
                                    columns=[{'id': c, 'name': c} for c in TABLE_COLS],
                                    data=dd_table.to_dict('records'),
+                                   export_format="csv",
                                    style_table={'width': '90%'},
                                    style_data_conditional=[
                                        {'if': {'filter_query': '{平均利润差} > 0', 'column_id': '平均利润差'},
